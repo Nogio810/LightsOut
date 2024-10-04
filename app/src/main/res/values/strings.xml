@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Lights Out</string>
+    <string name="panel_number">一辺のパネルの枚数を入力してください(%d以下)</string>
+    <string name="difficulty_level">難易度を選択してください</string>
+    <string name="easy">Easy</string>
+    <string name="normal">Normal</string>
+    <string name="hard">Hard</string>
+    <string name="enter_number">Enter your number</string>
+    <string name="wrong_number">無効な値です</string>
+    <string name="start_button">START</string>
+    <string name="click_Times">押した回数：%d</string>
+    <string name="answer_click_times">押す回数：%d</string>
+    <string name="play_again">Play Again</string>
+    <string name="play_guide">遊び方</string>
+    <string name="play_guide_1">１．テキストフィールドに3～%dの数値を入力します。この数値がグリッドの一辺のマスの数になります。</string>
+    <string name="play_guide_2">２．Easy、Normal、Hardから難易度を選択します。この難易度によって解答例の押すべきマスの数が決まります。</string>
+    <string name="play_guide_3">３．STARTボタンを押すとゲームが始まります。</string>
+    <string name="play_guide_4">４．表示されているグリッド上のパネルをクリックすると、クリックしたパネルと上下左右のパネルの色が反転します。</string>
+    <string name="play_guide_5">５．すべてのパネルを同じ色（緑）に揃えるとクリアです。</string>
+    <string name="play_guide_6">６．Play Againボタンを押すと数値や難易度選択画面に戻ります。</string>
+    <string name="various_functions">各種機能</string>
+    <string name="setting_function">を押すと各種機能が出てきます。</string>
+    <string name="refresh_function">を押すと問題が生成された時の状態に戻ります。また、押した回数も0に戻ります。</string>
+    <string name="answer_function">を押すと解答例が赤点で表示されます。一度押したら消すことはできません。</string>
+    <string name="hints_function">を押すとヒントとして解答例の場合の残りの押す回数が表示されます。一度押したら消すことはできません。</string>
+    <string name="guide_function">を押すとこの遊び方が出てきます。</string>
+    <string name="home_function">を押すと数値や難易度選択画面に戻ります。</string>
+</resources>
