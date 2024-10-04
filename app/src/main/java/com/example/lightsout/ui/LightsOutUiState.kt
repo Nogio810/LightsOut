@@ -13,5 +13,6 @@ data class LightsOutUiState(
     val answerIndent: MutableList<Int> = mutableListOf(),
     val clickTimes: Int = 0,
     val restart: Int = 0,
-    val alreadyGenerated: Boolean = false
+    val alreadyGenerated: Boolean = false,
+    val backCard: Int = 0
 )

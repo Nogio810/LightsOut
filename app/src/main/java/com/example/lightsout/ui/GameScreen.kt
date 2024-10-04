@@ -83,7 +83,10 @@ fun GameScreenApp(
                 answer = lightsOutUiState.isShowAnswer,
                 answerIndent = lightsOutUiState.answerIndent,
                 questionGenerated = { lightsOutScreenView.alreadyQuestionGenerated() },
-                checkCorrect = { lightsOutScreenView.checkCorrect() }
+                checkCorrect = { lightsOutScreenView.checkCorrect() },
+                increaseBackCard = { lightsOutScreenView.increaseBuckCard() },
+                decreaseBackCard = { lightsOutScreenView.decreaseBuckCard() },
+                backCard = lightsOutUiState.backCard
             )
         }
         if (lightsOutUiState.isShowPlayGuide){

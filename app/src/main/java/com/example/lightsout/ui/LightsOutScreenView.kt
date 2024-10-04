@@ -50,6 +50,7 @@ class LightsOutScreenView : ViewModel() {
                 answerIndent = mutableListOf(),
                 isShowHints = false,
                 isShowClear = false,
+                backCard = 0
             )
         }
         getNumber = false
@@ -139,6 +140,22 @@ class LightsOutScreenView : ViewModel() {
         _uiState.update {
             it.copy(
                 isShowHints = true
+            )
+        }
+    }
+
+    fun increaseBuckCard(){
+        _uiState.update {
+            it.copy(
+                backCard = it.backCard + 1
+            )
+        }
+    }
+
+    fun decreaseBuckCard(){
+        _uiState.update {
+            it.copy(
+                backCard = it.backCard - 1
             )
         }
     }

@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.internal.illegalDecoyCallException
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -209,7 +210,10 @@ fun LightsOutGame(
     answer: Boolean,
     answerIndent: MutableList<Int>,
     questionGenerated: () -> Unit,
-    checkCorrect: () -> Unit
+    checkCorrect: () -> Unit,
+    increaseBackCard: () -> Unit,
+    decreaseBackCard: () -> Unit,
+    backCard: Int
 ){
     val grid = questionGeneration(
         difficulty = difficulty,
@@ -217,7 +221,9 @@ fun LightsOutGame(
         index = index,
         generated = generated,
         questionGenerated = questionGenerated,
-        answerIndent = answerIndent
+        answerIndent = answerIndent,
+        increaseBackCard = increaseBackCard,
+        decreaseBackCard = decreaseBackCard
     )
     DisplayMass(
         massNumber = massNumber,
@@ -227,7 +233,10 @@ fun LightsOutGame(
         restart = restart,
         answerList = answerIndent,
         answer = answer,
-        checkCorrect = checkCorrect
+        checkCorrect = checkCorrect,
+        increaseBackCard = increaseBackCard,
+        decreaseBackCard = decreaseBackCard,
+        backCard = backCard
     )
 }
 
@@ -241,6 +250,9 @@ fun DisplayMass(
     answerList: MutableList<Int>,
     answer: Boolean,
     checkCorrect: () -> Unit,
+    increaseBackCard: () -> Unit,
+    decreaseBackCard: () -> Unit,
+    backCard: Int
 ){
     val circleSize = massSize * 0.3
     val grid = remember(restart) {
@@ -274,7 +286,16 @@ fun DisplayMass(
                         .size(massSize.dp)
                         .aspectRatio(1f)
                         .clickable {
-                            toggleCell(grid, row, col, massNumber, checkCorrect)
+                            toggleCell(
+                                grid,
+                                row,
+                                col,
+                                massNumber,
+                                checkCorrect,
+                                increaseBackCard,
+                                decreaseBackCard,
+                                backCard
+                                )
                             update()
                             answerCheck(answerList, row, col, massNumber)
                         }
@@ -304,7 +325,9 @@ fun questionGeneration(
     index: MutableList<Int>,
     generated: Boolean,
     questionGenerated: () -> Unit,
-    answerIndent: MutableList<Int>
+    answerIndent: MutableList<Int>,
+    increaseBackCard: () -> Unit,
+    decreaseBackCard: () -> Unit,
 ): MutableList<MutableList<Int>>{
     val mutableGrid = MutableList(massNumber) {MutableList(massNumber) { 0 } }
     Log.d("LightsOutGame", "Initial Restart value: $generated")
@@ -325,18 +348,48 @@ fun questionGeneration(
     for (i in index){
         val row = i / massNumber
         val col = i % massNumber
-        mutableGrid[row][col] = if(mutableGrid[row][col] == 0) 1 else 0
+        mutableGrid[row][col] = if(mutableGrid[row][col] == 0) {
+            increaseBackCard()
+            1
+        } else {
+            decreaseBackCard()
+            0
+        }
         if (row - 1 >= 0){
-            mutableGrid[row - 1][col] = if(mutableGrid[row - 1][col] == 0) 1 else 0
+            mutableGrid[row - 1][col] = if(mutableGrid[row - 1][col] == 0) {
+                increaseBackCard()
+                1
+            } else {
+                decreaseBackCard()
+                0
+            }
         }
         if (col - 1 >= 0){
-            mutableGrid[row][col - 1] = if(mutableGrid[row][col - 1] == 0) 1 else 0
+            mutableGrid[row][col - 1] = if(mutableGrid[row][col - 1] == 0) {
+                increaseBackCard()
+                1
+            } else {
+                decreaseBackCard()
+                0
+            }
         }
         if (row + 1 <= massNumber - 1){
-            mutableGrid[row + 1][col] = if(mutableGrid[row + 1][col] == 0) 1 else 0
+            mutableGrid[row + 1][col] = if(mutableGrid[row + 1][col] == 0) {
+                increaseBackCard()
+                1
+            } else {
+                decreaseBackCard()
+                0
+            }
         }
         if (col + 1 <= massNumber - 1){
-            mutableGrid[row][col + 1] = if(mutableGrid[row][col + 1] == 0) 1 else 0
+            mutableGrid[row][col + 1] = if(mutableGrid[row][col + 1] == 0) {
+                increaseBackCard()
+                1
+            } else {
+                decreaseBackCard()
+                0
+            }
         }
     }
     return mutableGrid
@@ -397,27 +450,59 @@ fun toggleCell(
     row: Int,
     col: Int,
     massNumber: Int,
-    checkCorrect: () -> Unit
+    checkCorrect: () -> Unit,
+    increaseBackCard: () -> Unit,
+    decreaseBackCard: () -> Unit,
+    backCard: Int
 ){
     val newGrid = grid.toMutableList()
     grid.clear()
-    newGrid[row][col] = if (newGrid[row][col] == 0) 1 else 0
+    newGrid[row][col] = if (newGrid[row][col] == 0) {
+        increaseBackCard()
+        1
+    } else {
+        decreaseBackCard()
+        0
+    }
     if (row - 1 >= 0){
-        newGrid[row - 1][col] = if (newGrid[row - 1][col] == 0) 1 else 0
+        newGrid[row - 1][col] = if (newGrid[row - 1][col] == 0) {
+            increaseBackCard()
+            1
+        } else {
+            decreaseBackCard()
+            0
+        }
     }
     if (col - 1 >= 0){
-        newGrid[row][col - 1] = if (newGrid[row][col - 1] == 0) 1 else 0
+        newGrid[row][col - 1] = if (newGrid[row][col - 1] == 0) {
+            increaseBackCard()
+            1
+        } else {
+            decreaseBackCard()
+            0
+        }
     }
     if (row + 1 <= massNumber - 1){
-        newGrid[row + 1][col] = if (newGrid[row + 1][col] == 0) 1 else 0
+        newGrid[row + 1][col] = if (newGrid[row + 1][col] == 0) {
+            increaseBackCard()
+            1
+        } else {
+            decreaseBackCard()
+            0
+        }
     }
     if (col + 1 <= massNumber - 1){
-        newGrid[row][col + 1] = if (newGrid[row][col + 1] == 0) 1 else 0
+        newGrid[row][col + 1] = if (newGrid[row][col + 1] == 0) {
+            increaseBackCard()
+            1
+        } else {
+            decreaseBackCard()
+            0
+        }
     }
     grid.addAll(newGrid)
 
-    val checkGrid = grid.flatten()
-    if (!checkGrid.contains(1)){
+    if (backCard == 0){
         checkCorrect()
     }
 }
