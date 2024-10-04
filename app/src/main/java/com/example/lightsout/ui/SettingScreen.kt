@@ -80,7 +80,6 @@ private fun SettingScreenApp(
     onClick: () -> Unit,
     lightsOutScreenView: LightsOutScreenView = viewModel(),
     minMass: Int,
-    darkTheme: Boolean = isSystemInDarkTheme(),
     playGuideShow: () -> Unit,
     playGuideHide: () -> Unit,
     modifier: Modifier = Modifier
