@@ -501,7 +501,7 @@ fun toggleCell(
         }
     }
     grid.addAll(newGrid)
-
+    Log.d("LightsOutGame", "backCard:$backCard")
     if (backCard == 0){
         checkCorrect()
     }
