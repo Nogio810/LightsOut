@@ -90,8 +90,10 @@ class LightsOutScreenView : ViewModel() {
             currentState.answerIndent.clear()
             currentState.answerIndent.addAll(currentState.indent)
             currentState.copy(
-                restart = currentState.restart + 1,
+                restartTime = currentState.restartTime + 1,
+                restartBool = true,
                 clickTimes = 0,
+                backCard = 0
             )
         }
     }
@@ -156,6 +158,14 @@ class LightsOutScreenView : ViewModel() {
         _uiState.update {
             it.copy(
                 backCard = it.backCard - 1
+            )
+        }
+    }
+
+    fun restarted(){
+        _uiState.update {
+            it.copy(
+                restartBool = false
             )
         }
     }

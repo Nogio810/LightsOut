@@ -206,16 +206,18 @@ fun LightsOutGame(
     index: MutableList<Int>,
     update: () -> Unit,
     generated: Boolean,
-    restart: Int,
+    restartTime: Int,
+    restartBool: Boolean,
     answer: Boolean,
     answerIndent: MutableList<Int>,
     questionGenerated: () -> Unit,
     checkCorrect: () -> Unit,
     increaseBackCard: () -> Unit,
     decreaseBackCard: () -> Unit,
-    backCard: Int
+    backCard: Int,
+    restarted: () -> Unit
 ){
-    val grid = questionGeneration(
+    val grid = remember (restartTime) {  questionGeneration(
         difficulty = difficulty,
         massNumber = massNumber,
         index = index,
@@ -223,17 +225,35 @@ fun LightsOutGame(
         questionGenerated = questionGenerated,
         answerIndent = answerIndent,
         increaseBackCard = increaseBackCard,
-        decreaseBackCard = decreaseBackCard
-    )
+        decreaseBackCard = decreaseBackCard,
+        backCard = backCard,
+        restarted = restarted
+    ) }
+    Log.d("LightsOutGame", "backCardAlreadyGenerate:$backCard")
+
+    when {
+        backCard == 0 && !generated -> {
+            Log.d("LightsOutGame", "backCard is 0 and not generated, executing specific logic.")
+            // backCardが0でかつ生成されていない場合の処理
+        }
+        backCard != 0 && generated -> {
+            Log.d("LightsOutGame", "backCard is not 0 and already generated, executing alternate logic.")
+            // backCardが0でなく生成済みの場合の処理
+        }
+        backCard == 0 && !restartBool -> {
+            Log.d("LightsOutGame", "backCard is 0 and already generated, executing alternate logic.")
+            checkCorrect()
+        }
+    }
+
     DisplayMass(
         massNumber = massNumber,
         initialGrid = grid,
         massSize = massSize,
         update = update,
-        restart = restart,
+        restart = restartTime,
         answerList = answerIndent,
         answer = answer,
-        checkCorrect = checkCorrect,
         increaseBackCard = increaseBackCard,
         decreaseBackCard = decreaseBackCard,
         backCard = backCard
@@ -249,7 +269,6 @@ fun DisplayMass(
     restart: Int,
     answerList: MutableList<Int>,
     answer: Boolean,
-    checkCorrect: () -> Unit,
     increaseBackCard: () -> Unit,
     decreaseBackCard: () -> Unit,
     backCard: Int
@@ -291,7 +310,6 @@ fun DisplayMass(
                                 row,
                                 col,
                                 massNumber,
-                                checkCorrect,
                                 increaseBackCard,
                                 decreaseBackCard,
                                 backCard
@@ -328,7 +346,10 @@ fun questionGeneration(
     answerIndent: MutableList<Int>,
     increaseBackCard: () -> Unit,
     decreaseBackCard: () -> Unit,
+    backCard: Int,
+    restarted: () -> Unit
 ): MutableList<MutableList<Int>>{
+    Log.d("LightsOutGame", "questionGeneration called")
     val mutableGrid = MutableList(massNumber) {MutableList(massNumber) { 0 } }
     Log.d("LightsOutGame", "Initial Restart value: $generated")
     if(!generated){
@@ -391,7 +412,9 @@ fun questionGeneration(
                 0
             }
         }
+        Log.d("LightsOutGame", "backCardGenerate:$backCard")
     }
+    restarted()
     return mutableGrid
 }
 
@@ -450,13 +473,11 @@ fun toggleCell(
     row: Int,
     col: Int,
     massNumber: Int,
-    checkCorrect: () -> Unit,
     increaseBackCard: () -> Unit,
     decreaseBackCard: () -> Unit,
     backCard: Int
 ){
-    val newGrid = grid.toMutableList()
-    grid.clear()
+    val newGrid = grid.map { row -> row.toMutableList().toMutableStateList() }.toMutableList()
     newGrid[row][col] = if (newGrid[row][col] == 0) {
         increaseBackCard()
         1
@@ -500,11 +521,9 @@ fun toggleCell(
             0
         }
     }
+    grid.clear()
     grid.addAll(newGrid)
     Log.d("LightsOutGame", "backCard:$backCard")
-    if (backCard == 0){
-        checkCorrect()
-    }
 }
 
 fun answerCheck(

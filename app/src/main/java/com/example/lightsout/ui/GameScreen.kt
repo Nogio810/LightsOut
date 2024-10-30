@@ -79,14 +79,16 @@ fun GameScreenApp(
                 index = lightsOutUiState.indent,
                 update = { lightsOutScreenView.updateClickTimes() },
                 generated = lightsOutUiState.alreadyGenerated,
-                restart = lightsOutUiState.restart,
+                restartTime = lightsOutUiState.restartTime,
+                restartBool = lightsOutUiState.restartBool,
                 answer = lightsOutUiState.isShowAnswer,
                 answerIndent = lightsOutUiState.answerIndent,
                 questionGenerated = { lightsOutScreenView.alreadyQuestionGenerated() },
                 checkCorrect = { lightsOutScreenView.checkCorrect() },
                 increaseBackCard = { lightsOutScreenView.increaseBuckCard() },
                 decreaseBackCard = { lightsOutScreenView.decreaseBuckCard() },
-                backCard = lightsOutUiState.backCard
+                backCard = lightsOutUiState.backCard,
+                restarted = {lightsOutScreenView.restarted()}
             )
         }
         if (lightsOutUiState.isShowPlayGuide){
