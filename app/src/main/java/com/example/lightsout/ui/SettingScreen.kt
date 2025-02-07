@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
@@ -100,7 +102,11 @@ private fun SettingScreenApp(
                 )
             )
             Box{
-                LazyColumn(modifier = Modifier.align(Alignment.TopCenter)) {
+                LazyColumn(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(WindowInsets.navigationBars.asPaddingValues())
+                ) {
                     item{
                         Image(
                             painterResource(R.drawable.lightsoutapppicture),
@@ -141,7 +147,6 @@ private fun SettingScreenApp(
                                 .fillMaxWidth()
                         )
                     }
-                    item{Spacer(modifier = modifier.height(16.dp))}
                 }
                 Column(modifier = Modifier.align(Alignment.TopEnd)) {
                     Spacer(modifier = Modifier.height(20.dp))
