@@ -1,4 +1,4 @@
-package com.example.lightsout.ui
+package com.example.lightsout.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -18,9 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.compose.LightsOutTheme
+import com.example.lightsout.ui.ClearScreen
+import com.example.lightsout.ui.ClickTimes
+import com.example.lightsout.ui.LightsOutGame
+import com.example.lightsout.ui.game.LightsOutScreenView
+import com.example.lightsout.ui.SettingIcon
+import com.example.lightsout.ui.ShowPlayGuide
 
 @Composable
 fun GameScreenApp(
