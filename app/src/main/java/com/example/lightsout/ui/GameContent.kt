@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -31,13 +30,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.lightsout.R
+import kotlinx.coroutines.delay
 
 @Composable
 fun SettingIcon(
@@ -55,11 +53,11 @@ fun SettingIcon(
     answerShow: () -> Unit,
     guideShow: () -> Unit,
     guideHide: () -> Unit,
-    showHints:() -> Unit,
+    showHints: () -> Unit,
     showPlayGuide: Boolean,
     darkTheme: Boolean = isSystemInDarkTheme(),
     modifier: Modifier
-){
+) {
     var expanded by remember { mutableStateOf(false) }
     Row(
         modifier = modifier
@@ -85,13 +83,13 @@ fun SettingIcon(
     ) {
         Spacer(modifier = modifier.padding(1.dp))
         Image(
-            painter = painterResource(if(darkTheme)R.drawable.dark_settings else R.drawable.settings),
+            painter = painterResource(if (darkTheme) R.drawable.dark_settings else R.drawable.settings),
             contentDescription = null,
             modifier = Modifier.size(40.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
         Image(
-            painter = painterResource(if(darkTheme)R.drawable.dark_refresh else R.drawable.refresh),
+            painter = painterResource(if (darkTheme) R.drawable.dark_refresh else R.drawable.refresh),
             contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
@@ -105,7 +103,7 @@ fun SettingIcon(
         )
         Spacer(modifier = Modifier.weight(1f))
         Image(
-            painter = painterResource(if(darkTheme)R.drawable.dark_lightbulb else R.drawable.lightbulb),
+            painter = painterResource(if (darkTheme) R.drawable.dark_lightbulb else R.drawable.lightbulb),
             contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
@@ -119,7 +117,7 @@ fun SettingIcon(
         )
         Spacer(modifier = Modifier.weight(1f))
         Image(
-            painter = painterResource(if(darkTheme)R.drawable.dark_priority_high else R.drawable.priority_high),
+            painter = painterResource(if (darkTheme) R.drawable.dark_priority_high else R.drawable.priority_high),
             contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
@@ -130,10 +128,10 @@ fun SettingIcon(
                         Modifier
                     }
                 )
-            )
+        )
         Spacer(modifier = Modifier.weight(1f))
         Image(
-            painter = painterResource(if (darkTheme)R.drawable.dark_question else R.drawable.question_mark),
+            painter = painterResource(if (darkTheme) R.drawable.dark_question else R.drawable.question_mark),
             contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
@@ -151,7 +149,7 @@ fun SettingIcon(
         )
         Spacer(modifier = Modifier.weight(1f))
         Image(
-            painter = painterResource(if (darkTheme)R.drawable.dark_home else R.drawable.home),
+            painter = painterResource(if (darkTheme) R.drawable.dark_home else R.drawable.home),
             contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
@@ -170,10 +168,10 @@ fun SettingIcon(
 @Composable
 fun ClickTimes(
     clickTimes: Int,
-    answerClickTimes:Int,
+    answerClickTimes: Int,
     showHints: Boolean,
     modifier: Modifier
-){
+) {
     Row {
         Text(
             stringResource(R.string.click_Times, clickTimes),
@@ -183,7 +181,7 @@ fun ClickTimes(
             ),
             color = colorScheme.onBackground
         )
-        if (showHints){
+        if (showHints) {
             Spacer(modifier = modifier.weight(1f))
             Text(
                 stringResource(R.string.answer_click_times, answerClickTimes),
@@ -215,19 +213,21 @@ fun LightsOutGame(
     decreaseBackCard: () -> Unit,
     backCard: Int,
     restarted: () -> Unit
-){
-    val grid = remember (restartTime) {  questionGeneration(
-        difficulty = difficulty,
-        massNumber = massNumber,
-        index = index,
-        generated = generated,
-        questionGenerated = questionGenerated,
-        answerIndent = answerIndent,
-        increaseBackCard = increaseBackCard,
-        decreaseBackCard = decreaseBackCard,
-        backCard = backCard,
-        restarted = restarted
-    ) }
+) {
+    val grid = remember(restartTime) {
+        questionGeneration(
+            difficulty = difficulty,
+            massNumber = massNumber,
+            index = index,
+            generated = generated,
+            questionGenerated = questionGenerated,
+            answerIndent = answerIndent,
+            increaseBackCard = increaseBackCard,
+            decreaseBackCard = decreaseBackCard,
+            backCard = backCard,
+            restarted = restarted
+        )
+    }
     Log.d("LightsOutGame", "backCardAlreadyGenerate:$backCard")
 
     when {
@@ -235,12 +235,20 @@ fun LightsOutGame(
             Log.d("LightsOutGame", "backCard is 0 and not generated, executing specific logic.")
             // backCardが0でかつ生成されていない場合の処理
         }
+
         backCard != 0 && generated -> {
-            Log.d("LightsOutGame", "backCard is not 0 and already generated, executing alternate logic.")
+            Log.d(
+                "LightsOutGame",
+                "backCard is not 0 and already generated, executing alternate logic."
+            )
             // backCardが0でなく生成済みの場合の処理
         }
+
         backCard == 0 && !restartBool -> {
-            Log.d("LightsOutGame", "backCard is 0 and already generated, executing alternate logic.")
+            Log.d(
+                "LightsOutGame",
+                "backCard is 0 and already generated, executing alternate logic."
+            )
             checkCorrect()
         }
     }
@@ -262,7 +270,7 @@ fun LightsOutGame(
 @Composable
 fun DisplayMass(
     massNumber: Int,
-    initialGrid: MutableList<MutableList<Int>>,
+    initialGrid: IntArray,
     massSize: Int,
     update: () -> Unit,
     restart: Int,
@@ -271,11 +279,19 @@ fun DisplayMass(
     increaseBackCard: () -> Unit,
     decreaseBackCard: () -> Unit,
     backCard: Int
-){
+) {
     val circleSize = massSize * 0.3
-    val grid = remember(restart) {
-        mutableStateListOf(*initialGrid.map{it.toMutableStateList()}.toTypedArray())
+    var grid by remember(restart) {
+        mutableStateOf(initialGrid.copyOf())
     }
+
+    LaunchedEffect(grid) {
+        val startTime = System.currentTimeMillis()
+        delay(1)
+        val endTime = System.currentTimeMillis()
+        Log.d("LightsOutGame", "画面の描画時間: ${endTime - startTime}ms")
+    }
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(massNumber),
         modifier = Modifier
@@ -288,23 +304,21 @@ fun DisplayMass(
         verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-        itemsIndexed(grid.flatten()) { index, panelNumber ->
+        items(massNumber * massNumber) { index ->
             val row = index / massNumber
             val col = index % massNumber
-            val imageRes = if (panelNumber == 0) {
-                R.drawable.green
-            } else {
-                R.drawable.white
-            }
+            val isOn = (grid[row] shr col) and 1 == 1
+
             Box {
                 Image(
-                    painter = painterResource(id = imageRes),
-                    contentDescription = null,
+                    painter = painterResource(if (isOn) R.drawable.white else R.drawable.green),
+                    contentDescription = "Light at ($row, $col)",
                     modifier = Modifier
                         .size(massSize.dp)
                         .aspectRatio(1f)
                         .clickable {
-                            toggleCell(
+                            val startTime = System.currentTimeMillis()
+                            grid = toggleCell(
                                 grid,
                                 row,
                                 col,
@@ -312,13 +326,15 @@ fun DisplayMass(
                                 increaseBackCard,
                                 decreaseBackCard,
                                 backCard
-                                )
+                            )
                             update()
                             answerCheck(answerList, row, col, massNumber)
+                            val endTime = System.currentTimeMillis()
+                            Log.d("LightsOutGame", "クリック処理時間: ${endTime - startTime}ms")
                         }
                 )
-                if(answer){
-                    if(answerList.contains(index)){
+                if (answer) {
+                    if (answerList.contains(index)) {
                         Canvas(
                             modifier = Modifier
                                 .size(circleSize.dp)
@@ -330,14 +346,14 @@ fun DisplayMass(
                     }
                 }
             }
-
         }
     }
+
 }
 
 
 fun questionGeneration(
-    difficulty:String,
+    difficulty: String,
     massNumber: Int,
     index: MutableList<Int>,
     generated: Boolean,
@@ -347,12 +363,12 @@ fun questionGeneration(
     decreaseBackCard: () -> Unit,
     backCard: Int,
     restarted: () -> Unit
-): MutableList<MutableList<Int>>{
+): IntArray {
     Log.d("LightsOutGame", "questionGeneration called")
-    val mutableGrid = MutableList(massNumber) {MutableList(massNumber) { 0 } }
+    val grid = IntArray(massNumber) { 0 }
     Log.d("LightsOutGame", "Initial Restart value: $generated")
-    if(!generated){
-        val mass: Int = when(difficulty){
+    if (!generated) {
+        val mass: Int = when (difficulty) {
             "Hard" -> (massNumber * massNumber * 0.7).toInt()
             "Normal" -> (massNumber * massNumber * 0.5).toInt()
             else -> (massNumber * massNumber * 0.3).toInt()
@@ -365,63 +381,38 @@ fun questionGeneration(
         Log.d("LightsOutGame", "Generate Question")
     }
     Log.d("LightsOutGame", "IndexContents:$index")
-    for (i in index){
+    for (i in index) {
         val row = i / massNumber
         val col = i % massNumber
-        mutableGrid[row][col] = if(mutableGrid[row][col] == 0) {
-            increaseBackCard()
-            1
-        } else {
-            decreaseBackCard()
-            0
-        }
-        if (row - 1 >= 0){
-            mutableGrid[row - 1][col] = if(mutableGrid[row - 1][col] == 0) {
-                increaseBackCard()
-                1
-            } else {
-                decreaseBackCard()
-                0
+        fun flip(r: Int, c: Int) {
+            val mask = (1 shl massNumber) - 1
+            if (r in 0 until massNumber && c in 0 until massNumber) {
+                val oldState = (grid[r] shr c) and 1
+                grid[r] = (grid[r] xor (1 shl c)) and mask
+                val newState = oldState xor 1
+                if (newState == 1) {
+                    increaseBackCard()
+                } else {
+                    decreaseBackCard()
+                }
             }
         }
-        if (col - 1 >= 0){
-            mutableGrid[row][col - 1] = if(mutableGrid[row][col - 1] == 0) {
-                increaseBackCard()
-                1
-            } else {
-                decreaseBackCard()
-                0
-            }
-        }
-        if (row + 1 <= massNumber - 1){
-            mutableGrid[row + 1][col] = if(mutableGrid[row + 1][col] == 0) {
-                increaseBackCard()
-                1
-            } else {
-                decreaseBackCard()
-                0
-            }
-        }
-        if (col + 1 <= massNumber - 1){
-            mutableGrid[row][col + 1] = if(mutableGrid[row][col + 1] == 0) {
-                increaseBackCard()
-                1
-            } else {
-                decreaseBackCard()
-                0
-            }
-        }
+        flip(row, col)
+        flip(row + 1, col)
+        flip(row - 1, col)
+        flip(row, col + 1)
+        flip(row, col - 1)
         Log.d("LightsOutGame", "backCardGenerate:$backCard")
     }
     restarted()
-    return mutableGrid
+    return grid
 }
 
 @Composable
 fun ClearScreen(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     Column(
         modifier = modifier
             .padding(
@@ -468,61 +459,38 @@ fun ClearScreen(
 }
 
 fun toggleCell(
-    grid: SnapshotStateList<SnapshotStateList<Int>>,
+    grid: IntArray,
     row: Int,
     col: Int,
     massNumber: Int,
     increaseBackCard: () -> Unit,
     decreaseBackCard: () -> Unit,
     backCard: Int
-){
-    val newGrid = grid.map { row -> row.toMutableList().toMutableStateList() }.toMutableList()
-    newGrid[row][col] = if (newGrid[row][col] == 0) {
-        increaseBackCard()
-        1
-    } else {
-        decreaseBackCard()
-        0
-    }
-    if (row - 1 >= 0){
-        newGrid[row - 1][col] = if (newGrid[row - 1][col] == 0) {
-            increaseBackCard()
-            1
-        } else {
-            decreaseBackCard()
-            0
+): IntArray {
+    val startTime = System.currentTimeMillis()
+    val newGrid = grid.copyOf()
+    fun flip(r: Int, c: Int) {
+        val mask = (1 shl massNumber) - 1
+        if (r in 0 until massNumber && c in 0 until massNumber) {
+            val oldState = (newGrid[r] shr c) and 1
+            newGrid[r] = (newGrid[r] xor (1 shl c)) and mask
+            val newState = oldState xor 1
+            if (newState == 1) {
+                increaseBackCard()
+            } else {
+                decreaseBackCard()
+            }
         }
     }
-    if (col - 1 >= 0){
-        newGrid[row][col - 1] = if (newGrid[row][col - 1] == 0) {
-            increaseBackCard()
-            1
-        } else {
-            decreaseBackCard()
-            0
-        }
-    }
-    if (row + 1 <= massNumber - 1){
-        newGrid[row + 1][col] = if (newGrid[row + 1][col] == 0) {
-            increaseBackCard()
-            1
-        } else {
-            decreaseBackCard()
-            0
-        }
-    }
-    if (col + 1 <= massNumber - 1){
-        newGrid[row][col + 1] = if (newGrid[row][col + 1] == 0) {
-            increaseBackCard()
-            1
-        } else {
-            decreaseBackCard()
-            0
-        }
-    }
-    grid.clear()
-    grid.addAll(newGrid)
-    Log.d("LightsOutGame", "backCard:$backCard")
+    flip(row, col)
+    flip(row + 1, col)
+    flip(row - 1, col)
+    flip(row, col + 1)
+    flip(row, col - 1)
+
+    val endTime = System.currentTimeMillis()
+    Log.d("LightsOutGame", "toggleCell 処理時間: ${endTime - startTime}ms")
+    return newGrid
 }
 
 fun answerCheck(
@@ -530,11 +498,11 @@ fun answerCheck(
     row: Int,
     col: Int,
     massNumber: Int
-){
+) {
     val clickMassIndentNumber = row * massNumber + col
-    if (answerIndent.contains(clickMassIndentNumber)){
+    if (answerIndent.contains(clickMassIndentNumber)) {
         answerIndent.remove(clickMassIndentNumber)
-    }else{
+    } else {
         answerIndent.add(clickMassIndentNumber)
     }
 }
