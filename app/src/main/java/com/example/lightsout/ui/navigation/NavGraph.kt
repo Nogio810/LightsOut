@@ -28,10 +28,11 @@ fun NavGraph(navController: NavHostController) {
                 minMass = minMass
             )
         }
-        composable("playGuide") {
+        composable("playGuide/{minMass}") { backStackEntry ->
+            val minMass = backStackEntry.arguments?.getString("minMass")?.toIntOrNull() ?: 0
             PlayGuideScreen(
                 navController,
-                onClose = { navController.popBackStack() }
+                minMass = minMass
             )
         }
     }
