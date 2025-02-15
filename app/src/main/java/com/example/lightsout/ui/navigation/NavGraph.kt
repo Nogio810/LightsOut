@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.lightsout.ui.screens.GameScreen
 import com.example.lightsout.ui.screens.PlayGuideScreen
 import com.example.lightsout.ui.screens.SettingScreen
 
@@ -24,7 +25,7 @@ fun NavGraph(navController: NavHostController) {
         composable("game/{minMass}", arguments = listOf(navArgument("minMass") { type = NavType.IntType })) { backStackEntry ->
             val minMass = backStackEntry.arguments?.getInt("minMass") ?: 0
             GameScreen(
-                onBack = { navController.popBackStack() },
+                navController,
                 minMass = minMass
             )
         }

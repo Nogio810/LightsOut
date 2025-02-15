@@ -1,7 +1,6 @@
-package com.example.lightsout.ui.model
+package com.example.lightsout.ui.components
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import android.content.Context
 import com.example.lightsout.R
 
 data class FunctionIcon(val textRes: Int, val light: Int, val dark: Int)
@@ -15,9 +14,7 @@ val functionIcons = listOf(
     FunctionIcon(R.string.home_function, R.drawable.home, R.drawable.dark_home)
 )
 
-@Composable
-fun getFunctionIcon(text: String, darkTheme: Boolean): Int{
-    val context = LocalContext.current
-    val icon = functionIcons.find { context.getString(it.textRes) == text }
+fun getFunctionIcon(context: Context, text: String, darkTheme: Boolean): Int{
+    val icon = functionIcons.find { context.resources.getString(it.textRes) == text }
     return icon?.let { if (darkTheme) it.dark else it.light } ?: 0
 }

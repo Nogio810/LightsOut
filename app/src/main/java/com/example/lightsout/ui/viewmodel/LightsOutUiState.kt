@@ -1,4 +1,4 @@
-package com.example.lightsout.ui.game
+package com.example.lightsout.ui.viewmodel
 
 data class LightsOutUiState(
     val isShowingHomepage: Boolean = true,

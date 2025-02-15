@@ -19,7 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.lightsout.data.DataSource
 import com.example.lightsout.ui.components.HelpIconButton
-import com.example.lightsout.ui.game.LightsOutScreenView
+import com.example.lightsout.ui.viewmodel.LightsOutScreenView
 
 @Composable
 fun SettingScreen(

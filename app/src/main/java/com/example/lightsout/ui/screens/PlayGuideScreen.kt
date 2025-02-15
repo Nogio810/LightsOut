@@ -33,7 +33,7 @@ import com.example.lightsout.data.ContentItem
 import com.example.lightsout.ui.components.GuideFunctionText
 import com.example.lightsout.ui.components.GuideSubtitle
 import com.example.lightsout.ui.components.GuideText
-import com.example.lightsout.ui.model.getFunctionIcon
+import com.example.lightsout.ui.components.getFunctionIcon
 
 @Composable
 fun PlayGuideScreen(
