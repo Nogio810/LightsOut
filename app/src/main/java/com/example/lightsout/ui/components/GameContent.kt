@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.lightsout.R
-import com.example.lightsout.ui.LightsOutGame
 import com.example.lightsout.ui.viewmodel.LightsOutScreenView
 import com.example.lightsout.ui.viewmodel.LightsOutUiState
 

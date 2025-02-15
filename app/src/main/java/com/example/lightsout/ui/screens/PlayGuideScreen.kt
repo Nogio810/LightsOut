@@ -108,7 +108,7 @@ fun PlayGuideScreen(
                         is ContentItem.Subtitle -> GuideSubtitle(item.text)
                         is ContentItem.BulletPointGuide -> GuideText(item.text)
                         is ContentItem.BulletPointFunction -> {
-                            val icon = getFunctionIcon(item.text, darkTheme)
+                            val icon = getFunctionIcon(context, item.text, darkTheme)
                             GuideFunctionText(item.text, icon)
                         }
                     }
