@@ -53,7 +53,7 @@ fun GameScreen(
         )
         ClearOverlay(
             isShowClear = lightsOutUiState.isShowClear,
-            onRestart = { lightsOutScreenView.restartGame() },
+            onRestart = { lightsOutScreenView.resetHomeScreenStates() },
             modifier = Modifier.align(Alignment.Center)
         )
     }

@@ -113,22 +113,6 @@ class LightsOutScreenView : ViewModel() {
         }
     }
 
-    fun playGuideShow(){
-        _uiState.update {
-            it.copy(
-                isShowPlayGuide = true
-            )
-        }
-    }
-
-    fun playGuideHide(){
-        _uiState.update {
-            it.copy(
-                isShowPlayGuide = false
-            )
-        }
-    }
-
     fun checkCorrect(){
         _uiState.update {
             it.copy(

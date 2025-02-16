@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.RadioButton
@@ -34,11 +32,11 @@ fun DifficultySelector(
             color = colorScheme.onBackground,
             fontWeight = FontWeight.Bold
         )
-        LazyColumn(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp) // 間隔を統一
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(difficultyOptions) { difficulty ->
+            difficultyOptions.forEach { difficulty ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -51,7 +49,7 @@ fun DifficultySelector(
                 ) {
                     RadioButton(
                         selected = difficulty == selectedDifficulty,
-                        onClick = null, // `Row` の `onClick` に統一
+                        onClick = null,
                         colors = RadioButtonDefaults.colors(
                             selectedColor = colorScheme.primary,
                             unselectedColor = colorScheme.secondary

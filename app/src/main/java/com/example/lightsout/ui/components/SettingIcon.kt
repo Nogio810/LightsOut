@@ -30,6 +30,7 @@ fun SettingIcon(
     restart: () -> Unit,
     answerShow: () -> Unit,
     showHints: () -> Unit,
+    reset: () -> Unit,
     darkTheme: Boolean = isSystemInDarkTheme(),
     modifier: Modifier
 ) {
@@ -61,6 +62,7 @@ fun SettingIcon(
             navController.navigate("playGuide/$minMass")
         }
         SettingIconButton(darkTheme, R.drawable.home, R.drawable.dark_home, alpha) {
+            reset()
             navController.navigate("setting")
         }
     }

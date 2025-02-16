@@ -25,6 +25,7 @@ fun GameTopBar(
             restart = {lightsOutScreenView.restartGame()},
             answerShow = { lightsOutScreenView.answerShow() },
             showHints = { lightsOutScreenView.showHints() },
+            reset = { lightsOutScreenView.resetHomeScreenStates() },
             modifier = Modifier
         )
     }
