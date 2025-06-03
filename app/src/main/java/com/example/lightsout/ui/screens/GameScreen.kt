@@ -89,7 +89,3 @@ fun GameScreen(
         )
     }
 }
-var count: Int = 0
-Text(
-    text = "count number:$count"
-)
