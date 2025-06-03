@@ -24,8 +24,8 @@ import com.example.lightsout.R
 fun MassInputField(
     minMass: Int,
     isNumberWrong: Boolean,
-    userNumber: String,
-    onUserNumberChanged: (String) -> Unit,
+    rowNum: String,
+    onRowNumChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ){
     val focusManager = LocalFocusManager.current
@@ -51,7 +51,7 @@ fun MassInputField(
             fontWeight = FontWeight.Bold
         )
         OutlinedTextField(
-            value = userNumber,
+            value = rowNum,
             singleLine = true,
             shape = shapes.medium,
             modifier = Modifier
@@ -61,7 +61,7 @@ fun MassInputField(
                 )
                 .fillMaxWidth(),
             colors = textFieldColors,
-            onValueChange = onUserNumberChanged,
+            onValueChange = onRowNumChanged,
             label = {
                 Text(
                     text = when{
