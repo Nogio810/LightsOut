@@ -1,9 +1,6 @@
-package com.example.lightsout.ui
+package com.example.lightsout.ui.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,32 +8,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class LightsOutScreenView : ViewModel() {
-    var userNumber by mutableStateOf("")
-        private set
-
     private val _uiState = MutableStateFlow(LightsOutUiState())
     val uiState: StateFlow<LightsOutUiState> = _uiState.asStateFlow()
 
-    private var getNumber = false
-    private var getDifficulty = false
+    private val _shouldStartGame = MutableStateFlow(false)
+    val shouldStartGame: StateFlow<Boolean> = _shouldStartGame
 
-    fun updateUserNumber(enterNumber: String) {
-        userNumber = enterNumber
-    }
-
-    fun checkUserNumber(minMass: Int){
-        if((userNumber.toInt() <= minMass) and (true) and (userNumber.toInt() > 1)){
+    fun checkUserNumber(enterNumber: String, minMass: Int){
+        val number = enterNumber.toIntOrNull()
+        Log.d("LightsOutGame", "checkUserNumber called with number: $number")
+        if(number != null && number > 2 && number <= minMass){
             _uiState.update { currentState ->
-                currentState.copy(rowNum = userNumber.toInt())
+                Log.d("LightsOutGame", "Updating rowNum to: $number")
+                currentState.copy(rowNum = number, isNumberWrong = false)
             }
-            getNumber = true
         }else{
             _uiState.update { currentState ->
                 currentState.copy(isNumberWrong = true)
             }
         }
-
-        updateUserNumber("")
     }
 
     fun resetHomeScreenStates(){
@@ -50,30 +40,15 @@ class LightsOutScreenView : ViewModel() {
                 answerIndent = mutableListOf(),
                 isShowHints = false,
                 isShowClear = false,
-                backCard = 0
+                backCard = 0,
+                rowNum = 0,
             )
         }
-        getNumber = false
-        getDifficulty = false
     }
 
     fun setDifficulties(desireDifficulty: String){
         _uiState.update { currentState ->
             currentState.copy(difficulty = desireDifficulty)
-        }
-        getDifficulty = true
-    }
-
-    fun updateGameScreen(){
-        if (getNumber and getDifficulty){
-            _uiState.update {
-                it.copy(
-                    isShowingHomepage = false
-                )
-            }
-        }else{
-            getNumber = false
-            getDifficulty = false
         }
     }
 
@@ -110,22 +85,6 @@ class LightsOutScreenView : ViewModel() {
         _uiState.update {
             it.copy(
                 isShowAnswer = true
-            )
-        }
-    }
-
-    fun playGuideShow(){
-        _uiState.update {
-            it.copy(
-                isShowPlayGuide = true
-            )
-        }
-    }
-
-    fun playGuideHide(){
-        _uiState.update {
-            it.copy(
-                isShowPlayGuide = false
             )
         }
     }
@@ -168,5 +127,13 @@ class LightsOutScreenView : ViewModel() {
                 restartBool = false
             )
         }
+    }
+
+    fun triggerGameStart() {
+        _shouldStartGame.value = true
+    }
+
+    fun resetGameStartFlag() {
+        _shouldStartGame.value = false
     }
 }
