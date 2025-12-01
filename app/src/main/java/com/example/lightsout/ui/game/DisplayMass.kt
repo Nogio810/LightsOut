@@ -18,19 +18,16 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DisplayMass(
     massNumber: Int,
-    initialGrid: IntArray,
+    gridState: IntArray,
     massSize: Int,
     update: () -> Unit,
     restart: Int,
     answerList: MutableList<Int>,
     answer: Boolean,
     increaseBackCard: () -> Unit,
-    decreaseBackCard: () -> Unit
+    decreaseBackCard: () -> Unit,
+    onCellClick: (row: Int, col: Int) -> Unit
 ){
-    var grid by remember(restart){
-        mutableStateOf(initialGrid.copyOf())
-    }
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(massNumber),
         modifier = Modifier
@@ -40,10 +37,13 @@ fun DisplayMass(
         verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-        items(massNumber * massNumber){index ->
+        items(
+            massNumber * massNumber,
+            key = { index -> index }
+        ){index ->
             val row = index / massNumber
             val col = index % massNumber
-            val isOn = (grid[row] shr col) and 1 == 1
+            val isOn = (gridState[row] shr col) and 1 == 1
 
             LightCell(
                 isOn = isOn,
@@ -51,7 +51,7 @@ fun DisplayMass(
                 isAnswer = answer && index in answerList,
                 onClick = {
                     val startTime = System.currentTimeMillis()
-                    grid = toggleCell(grid, row, col, massNumber, answerList, increaseBackCard, decreaseBackCard)
+                    onCellClick(row, col)
                     update()
                     val endTime = System.currentTimeMillis()
                     Log.d("LightsOutGame", "クリック処理時間: ${endTime - startTime}ms")

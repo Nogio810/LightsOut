@@ -32,11 +32,7 @@ fun GameScreen(
 
     val uiState by lightsOutScreenView.uiState.collectAsState()
     if (uiState.rowNum == 0) {
-        Log.e("LightsOutGame", "Invalid rowNum detected, navigating back to SettingScreen")
-        navController.navigate("setting") {
-            popUpTo("game") { inclusive = true } // GameScreen を削除
-            launchSingleTop = true
-        }
+        Box(modifier = Modifier.fillMaxSize().background(colorScheme.background))
         return
     }
 

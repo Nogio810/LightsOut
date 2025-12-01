@@ -55,7 +55,7 @@ fun SettingScreen(
             item {
                 MassNumberSetting(
                     isNumberWrong = uiState.isNumberWrong,
-                    rowNum = uiState.rowNum.toString(),
+                    rowNum = uiState.inputString,
                     onRowNumChanged = {
                         Log.d("LightsOutGame", "onStartGame called with number: $it")
                         viewModel.checkUserNumber(it, minMass)

@@ -13,6 +13,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -27,8 +28,10 @@ fun MassInputField(
     rowNum: String,
     onRowNumChanged: (String) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val textFieldColors = TextFieldDefaults.colors(
         focusedContainerColor = colorScheme.primaryContainer,
         focusedTextColor = colorScheme.onPrimaryContainer,
@@ -45,8 +48,7 @@ fun MassInputField(
     ) {
         Text(
             text = stringResource(R.string.panel_number, minMass),
-            modifier = Modifier
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             color = colorScheme.onBackground,
             fontWeight = FontWeight.Bold
         )
@@ -56,31 +58,27 @@ fun MassInputField(
             shape = shapes.medium,
             modifier = Modifier
                 .padding(
-                    start = 16.dp,
-                    end = 16.dp
+                    start = 16.dp, end = 16.dp
                 )
                 .fillMaxWidth(),
             colors = textFieldColors,
             onValueChange = onRowNumChanged,
             label = {
                 Text(
-                    text = when{
+                    text = when {
                         isNumberWrong -> stringResource(R.string.wrong_number)
                         else -> stringResource(R.string.enter_number)
-                    },
-                    color = if(isNumberWrong) colorScheme.onError else colorScheme.onBackground
+                    }, color = if (isNumberWrong) colorScheme.onError else colorScheme.onBackground
                 )
             },
             isError = isNumberWrong,
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
+                keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
-                }
-            )
-        )
+                    keyboardController?.hide()
+                }))
     }
 }
