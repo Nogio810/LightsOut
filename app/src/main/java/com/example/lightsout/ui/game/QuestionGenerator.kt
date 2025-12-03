@@ -2,20 +2,27 @@ package com.example.lightsout.ui.game
 
 import android.util.Log
 
+data class QuestionGeneratorResult(
+    val grid: IntArray,
+    val newIndex: List<Int>,
+    val newAnswerIndex: List<Int>,
+    val totalLights: Int
+)
+
 fun questionGeneration(
     difficulty: String,
     massNumber: Int,
-    index: MutableList<Int>,
     generated: Boolean,
     questionGenerated: () -> Unit,
-    answerIndex: MutableList<Int>,
-    increaseBackCard: () -> Unit,
-    decreaseBackCard: () -> Unit,
+    setBackCardCount: (Int) -> Unit,
     restarted: () -> Unit
-): IntArray {
+): QuestionGeneratorResult {
     Log.d("LightsOutGame", "questionGeneration called")
 
     val grid = IntArray(massNumber) { 0 }
+
+    var newIndex: List<Int> = emptyList()
+    var newAnswerIndex: List<Int> = emptyList()
 
     if (!generated) {
         val mass: Int = when (difficulty) {
@@ -24,28 +31,32 @@ fun questionGeneration(
             else -> (massNumber * massNumber * 0.3).toInt()
         }
 
-        val newIndex = (0 until massNumber * massNumber).shuffled().take(mass)
+        val newGenerateIndex = (0 until massNumber * massNumber).shuffled().take(mass)
 
-        index.clear()
-        index.addAll(newIndex)
-
-        answerIndex.clear()
-        answerIndex.addAll(index)
+        newIndex = newGenerateIndex
+        newAnswerIndex = newGenerateIndex
 
         questionGenerated()
-        Log.d("LightsOutGame", "Generate Question: $index")
+        Log.d("LightsOutGame", "Generate Question: $newIndex")
     }
 
-    for (i in index) {
+    for (i in newIndex) {
         val row = i / massNumber
         val col = i % massNumber
-        flip(grid, row, col, massNumber, increaseBackCard, decreaseBackCard)
-        flip(grid, row + 1, col, massNumber, increaseBackCard, decreaseBackCard)
-        flip(grid, row - 1, col, massNumber, increaseBackCard, decreaseBackCard)
-        flip(grid, row, col + 1, massNumber, increaseBackCard, decreaseBackCard)
-        flip(grid, row, col - 1, massNumber, increaseBackCard, decreaseBackCard)
+        flip(grid, row, col, massNumber)
+        flip(grid, row + 1, col, massNumber)
+        flip(grid, row - 1, col, massNumber)
+        flip(grid, row, col + 1, massNumber)
+        flip(grid, row, col - 1, massNumber)
     }
+    val totalLights = grid.sumOf { Integer.bitCount(it) }
+    setBackCardCount(totalLights)
 
     restarted()
-    return grid
+    return QuestionGeneratorResult(
+        grid = grid,
+        newIndex = newIndex,
+        newAnswerIndex = newAnswerIndex,
+        totalLights = totalLights
+    )
 }

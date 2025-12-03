@@ -1,6 +1,7 @@
 package com.example.lightsout.ui.viewmodel
 
 import android.util.Log
+import androidx.annotation.IntegerRes
 import androidx.lifecycle.ViewModel
 import com.example.lightsout.ui.game.flip
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -68,9 +69,9 @@ class LightsOutScreenView : ViewModel() {
 
     fun restartGame(){
         _uiState.update { currentState ->
-            currentState.answerIndent.clear()
-            currentState.answerIndent.addAll(currentState.indent)
+            val newAnswerIndent = currentState.indent.toList()
             currentState.copy(
+                answerIndent = newAnswerIndent,
                 restartTime = currentState.restartTime + 1,
                 restartBool = true,
                 clickTimes = 0,
@@ -150,7 +151,6 @@ class LightsOutScreenView : ViewModel() {
             val newGrid  = oldGrid.copyOf() // 新しい配列を作成
 
             // 2. 盤面をトグル
-            // ★ViewModel内部で flip を呼び出す（flipの定義は省略）★
             flip(newGrid, row, col, massNumber)
             flip(newGrid, row + 1, col, massNumber)
             flip(newGrid, row - 1, col, massNumber)
@@ -169,12 +169,30 @@ class LightsOutScreenView : ViewModel() {
             // clickTimesの更新
             val newClickTimes = currentState.clickTimes + 1
 
+            val newBackCardCount = newGrid.sumOf { Integer.bitCount(it) }
+
             // 4. 状態をコピーして返す (ここで再コンポーズがトリガーされる)
             currentState.copy(
                 currentGrid = newGrid, // 新しい配列で更新
                 answerIndent = newAnswerIndent.toList(), // 新しいリストで更新
-                clickTimes = newClickTimes
-                // backCardの増減処理もここで適切に行う
+                clickTimes = newClickTimes,
+                backCard = newBackCardCount
+            )
+        }
+    }
+
+    fun setBackCardCount(count: Int) {
+        _uiState.update {
+            it.copy(backCard = count)
+        }
+    }
+
+    fun setQuestionStates(newIndex: List<Int>, newAnswerIndex: List<Int>, newGrid: IntArray) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                indent = newIndex,
+                answerIndent = newAnswerIndex,
+                currentGrid = newGrid.copyOf() // 状態に保存
             )
         }
     }

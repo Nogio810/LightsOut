@@ -20,13 +20,9 @@ fun DisplayMass(
     massNumber: Int,
     gridState: IntArray,
     massSize: Int,
-    update: () -> Unit,
-    restart: Int,
-    answerList: MutableList<Int>,
+    answerList: List<Int>,
     answer: Boolean,
-    increaseBackCard: () -> Unit,
-    decreaseBackCard: () -> Unit,
-    onCellClick: (row: Int, col: Int) -> Unit
+    onCellClicked: (row: Int, col: Int, massNumber: Int) -> Unit
 ){
     LazyVerticalGrid(
         columns = GridCells.Fixed(massNumber),
@@ -51,8 +47,7 @@ fun DisplayMass(
                 isAnswer = answer && index in answerList,
                 onClick = {
                     val startTime = System.currentTimeMillis()
-                    onCellClick(row, col)
-                    update()
+                    onCellClicked(row, col, massNumber)
                     val endTime = System.currentTimeMillis()
                     Log.d("LightsOutGame", "クリック処理時間: ${endTime - startTime}ms")
                 }

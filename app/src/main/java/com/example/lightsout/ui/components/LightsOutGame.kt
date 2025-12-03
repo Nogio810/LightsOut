@@ -2,6 +2,7 @@ package com.example.lightsout.ui.components
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import com.example.lightsout.ui.game.DisplayMass
 import com.example.lightsout.ui.game.questionGeneration
@@ -13,7 +14,7 @@ fun LightsOutGame(
     uiState: LightsOutUiState,
     lightsOutScreenView: LightsOutScreenView,
     massSize: Int
-){
+) {
     val massNumber = uiState.rowNum
     val difficulty = uiState.difficulty
     val index = uiState.indent
@@ -25,19 +26,21 @@ fun LightsOutGame(
     val backCard = uiState.backCard
 
 
-    val grid = remember(restartTime) {
+    val result = remember(restartTime) {
         questionGeneration(
             difficulty = difficulty,
             massNumber = massNumber,
-            index = index,
             generated = generated,
             questionGenerated = { lightsOutScreenView.alreadyQuestionGenerated() },
-            answerIndex = answerIndent,
-            increaseBackCard = { lightsOutScreenView.increaseBuckCard() },
-            decreaseBackCard = { lightsOutScreenView.decreaseBuckCard() },
+            setBackCardCount = { totalLights -> lightsOutScreenView.setBackCardCount(totalLights) },
             restarted = { lightsOutScreenView.restarted() }
         )
     }
+
+    val grid = result.grid
+    val newIndex = result.newIndex
+    val newAnswerIndex = result.newAnswerIndex
+
     Log.d("LightsOutGame", "backCardAlreadyGenerate:$backCard")
 
     when {
@@ -46,24 +49,41 @@ fun LightsOutGame(
         }
 
         backCard != 0 && generated -> {
-            Log.d("LightsOutGame", "backCard is not 0 and already generated, executing alternate logic.")
+            Log.d(
+                "LightsOutGame",
+                "backCard is not 0 and already generated, executing alternate logic."
+            )
         }
 
         backCard == 0 && !restartBool -> {
-            Log.d("LightsOutGame", "backCard is 0 and already generated, executing alternate logic.")
+            Log.d(
+                "LightsOutGame",
+                "backCard is 0 and already generated, executing alternate logic."
+            )
             lightsOutScreenView.checkCorrect()
         }
     }
 
+    LaunchedEffect(key1 = restartTime) {
+        lightsOutScreenView.setQuestionStates(
+            newIndex = result.newIndex,
+            newAnswerIndex = result.newAnswerIndex,
+            newGrid = result.grid
+        )
+    }
+
     DisplayMass(
         massNumber = massNumber,
-        initialGrid = grid,
+        gridState = grid,
         massSize = massSize,
-        update = { lightsOutScreenView.updateClickTimes() },
-        restart = restartTime,
         answerList = answerIndent,
         answer = answer,
-        increaseBackCard = { lightsOutScreenView.increaseBuckCard() },
-        decreaseBackCard = { lightsOutScreenView.decreaseBuckCard() }
+        onCellClicked = { row, col, massNum ->
+            lightsOutScreenView.onCellClicked(
+                row,
+                col,
+                massNum
+            )
+        }
     )
 }
