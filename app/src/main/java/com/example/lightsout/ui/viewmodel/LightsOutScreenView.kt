@@ -19,20 +19,30 @@ class LightsOutScreenView : ViewModel() {
     fun checkUserNumber(enterNumber: String, minMass: Int){
         val number = enterNumber.toIntOrNull()
 
-        _uiState.update { it.copy(inputString = enterNumber) }
+        Log.d("LightsOutGame", "=== checkUserNumber START ===")
+        Log.d("LightsOutGame", "Input: $enterNumber")
+        Log.d("LightsOutGame", "Current inputString BEFORE update: ${_uiState.value.inputString}")
 
-        Log.d("LightsOutGame", "checkUserNumber called with number: $number")
-
-        if(number != null && number > 2 && number <= minMass){
-            _uiState.update { currentState ->
-                Log.d("LightsOutGame", "Updating rowNum to: $number")
-                currentState.copy(rowNum = number, isNumberWrong = false)
+        _uiState.update { currentState ->
+            val newState = if(number != null && number > 2 && number <= minMass){
+                Log.d("LightsOutGame", "Valid number")
+                currentState.copy(
+                    inputString = enterNumber,
+                    rowNum = number,
+                    isNumberWrong = false
+                )
+            } else {
+                Log.d("LightsOutGame", "Invalid number")
+                currentState.copy(
+                    inputString = enterNumber,
+                    isNumberWrong = true
+                )
             }
-        }else{
-            _uiState.update { currentState ->
-                currentState.copy(isNumberWrong = true)
-            }
+            Log.d("LightsOutGame", "New state inputString: ${newState.inputString}")
+            newState
         }
+        Log.d("LightsOutGame", "Current inputString AFTER update: ${_uiState.value.inputString}")
+        Log.d("LightsOutGame", "=== checkUserNumber END ===")
     }
 
     fun resetHomeScreenStates(){
@@ -41,9 +51,9 @@ class LightsOutScreenView : ViewModel() {
                 isShowingHomepage = true,
                 alreadyGenerated = false,
                 clickTimes = 0,
-                indent = mutableListOf(),
+                indent = emptyList(),
                 isShowAnswer = false,
-                answerIndent = mutableListOf(),
+                answerIndent = emptySet(),
                 isShowHints = false,
                 isShowClear = false,
                 backCard = 0,
@@ -71,7 +81,7 @@ class LightsOutScreenView : ViewModel() {
         _uiState.update { currentState ->
             val newAnswerIndent = currentState.indent.toList()
             currentState.copy(
-                answerIndent = newAnswerIndent,
+                answerIndent = newAnswerIndent.toSet(),
                 restartTime = currentState.restartTime + 1,
                 restartBool = true,
                 clickTimes = 0,
@@ -112,22 +122,6 @@ class LightsOutScreenView : ViewModel() {
         }
     }
 
-    fun increaseBuckCard(){
-        _uiState.update {
-            it.copy(
-                backCard = it.backCard + 1
-            )
-        }
-    }
-
-    fun decreaseBuckCard(){
-        _uiState.update {
-            it.copy(
-                backCard = it.backCard - 1
-            )
-        }
-    }
-
     fun restarted(){
         _uiState.update {
             it.copy(
@@ -145,6 +139,7 @@ class LightsOutScreenView : ViewModel() {
     }
 
     fun onCellClicked(row: Int, col: Int, massNumber: Int){
+        val startTimeUpdate = System.currentTimeMillis()
         // 1. 状態を更新
         _uiState.update { currentState ->
             val oldGrid = currentState.currentGrid
@@ -174,11 +169,14 @@ class LightsOutScreenView : ViewModel() {
             // 4. 状態をコピーして返す (ここで再コンポーズがトリガーされる)
             currentState.copy(
                 currentGrid = newGrid, // 新しい配列で更新
-                answerIndent = newAnswerIndent.toList(), // 新しいリストで更新
+                answerIndent = newAnswerIndent.toSet(), // 新しいリストで更新
                 clickTimes = newClickTimes,
                 backCard = newBackCardCount
             )
         }
+
+        val endTimeUpdate = System.currentTimeMillis()
+        Log.d("LightsOutGame", "ViewModel Update処理時間: ${endTimeUpdate - startTimeUpdate}ms")
     }
 
     fun setBackCardCount(count: Int) {
@@ -191,7 +189,7 @@ class LightsOutScreenView : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(
                 indent = newIndex,
-                answerIndent = newAnswerIndex,
+                answerIndent = newAnswerIndex.toSet(),
                 currentGrid = newGrid.copyOf() // 状態に保存
             )
         }

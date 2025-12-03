@@ -57,8 +57,8 @@ fun SettingScreen(
                     isNumberWrong = uiState.isNumberWrong,
                     rowNum = uiState.inputString,
                     onRowNumChanged = {
-                        Log.d("LightsOutGame", "onStartGame called with number: $it")
                         viewModel.checkUserNumber(it, minMass)
+                        Log.d("LightsOutGame", "inputString:${uiState.inputString}")
                     },
                     minMass = minMass,
                     difficultyOptions = DataSource.difficulties.map { id ->
@@ -84,17 +84,13 @@ fun SettingScreen(
     }
 
     LaunchedEffect(shouldStartGame) {
-        Log.d("LightsOutGame", "LaunchedEffect triggered - shouldStartGame: $shouldStartGame, rowNum: ${uiState.rowNum}")
-        if(shouldStartGame && uiState.rowNum > 2 && uiState.difficulty.isNotEmpty()){
+        Log.d("LightsOutGame", "LaunchedEffect triggered - shouldStartGame: $shouldStartGame, rowNum: ${uiState.rowNum}, difficulty: ${uiState.difficulty}")
+        if(shouldStartGame && !uiState.isNumberWrong && uiState.difficulty.isNotEmpty() && uiState.rowNum > 2){
             viewModel.resetGameStartFlag()
             Log.d("LightsOutGame", "START")
             onStartGame(minMass)
         }else{
             viewModel.resetGameStartFlag()
         }
-    }
-
-    LaunchedEffect(uiState.rowNum) {
-        Log.d("LightsOutGame", "rowNum changed - new value: ${uiState.rowNum}")
     }
 }

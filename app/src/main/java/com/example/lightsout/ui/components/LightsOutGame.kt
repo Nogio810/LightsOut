@@ -1,9 +1,15 @@
 package com.example.lightsout.ui.components
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import com.example.lightsout.ui.game.DisplayMass
 import com.example.lightsout.ui.game.questionGeneration
 import com.example.lightsout.ui.viewmodel.LightsOutScreenView
@@ -37,9 +43,33 @@ fun LightsOutGame(
         )
     }
 
-    val grid = result.grid
-    val newIndex = result.newIndex
-    val newAnswerIndex = result.newAnswerIndex
+    val clickTimestamp = remember { mutableStateOf(0L) }
+
+    val stableOnCellClicked = remember(lightsOutScreenView) {
+        { row: Int, col: Int, massNum: Int ->
+            clickTimestamp.value = System.currentTimeMillis()
+            lightsOutScreenView.onCellClicked(row, col, massNum)
+        }
+    }
+
+    LaunchedEffect(key1 = restartTime) {
+        lightsOutScreenView.setQuestionStates(
+            newIndex = result.newIndex,
+            newAnswerIndex = result.newAnswerIndex,
+            newGrid = result.grid
+        )
+    }
+
+    if (uiState.currentGrid.isEmpty() || massNumber == 0) {
+        Log.d("LightsOutGame", "Waiting for grid initialization...")
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
 
     Log.d("LightsOutGame", "backCardAlreadyGenerate:$backCard")
 
@@ -64,26 +94,23 @@ fun LightsOutGame(
         }
     }
 
-    LaunchedEffect(key1 = restartTime) {
-        lightsOutScreenView.setQuestionStates(
-            newIndex = result.newIndex,
-            newAnswerIndex = result.newAnswerIndex,
-            newGrid = result.grid
-        )
+    val isGameActive = generated && !restartBool
+
+    LaunchedEffect(uiState.currentGrid) {
+        if (isGameActive && clickTimestamp.value != 0L) {
+            val renderTime = System.currentTimeMillis() - clickTimestamp.value
+            Log.d("LightsOutGame", "体感遅延時間:${renderTime}ms")
+
+            clickTimestamp.value = 0L
+        }
     }
 
     DisplayMass(
         massNumber = massNumber,
-        gridState = grid,
+        gridState = uiState.currentGrid,
         massSize = massSize,
         answerList = answerIndent,
         answer = answer,
-        onCellClicked = { row, col, massNum ->
-            lightsOutScreenView.onCellClicked(
-                row,
-                col,
-                massNum
-            )
-        }
+        onCellClicked = stableOnCellClicked
     )
 }

@@ -14,7 +14,7 @@ fun GameContent(
     massSize: Int,
     lightsOutScreenView: LightsOutScreenView,
     modifier: Modifier = Modifier
-){
+) {
     val clickText = stringResource(R.string.click_Times, uiState.clickTimes)
     val answerClickText = if (uiState.isShowHints) {
         stringResource(R.string.answer_click_times, uiState.answerIndent.size)
